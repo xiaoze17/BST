@@ -178,6 +178,76 @@ public class BST<E extends Comparable<E>> {
             }
         }
     }
+
+    public Node minNode(){
+        Node temp =root;
+        while (temp.left != null) {
+            temp = temp.left;
+        }
+        return temp;
+    }
+
+    public E minimum() {
+        if (size == 0) {
+            throw new IllegalArgumentException("BST is empty!");
+        }
+
+        return minimum(root).e;
+    }
+
+    private Node minimum(Node node) {
+        if (node.left == null) {
+            return node;
+        }
+        return minimum(node.left);
+    }
+
+    public Node maxNode(){
+        Node temp =root;
+        while (temp.right != null) {
+            temp = temp.right;
+        }
+        return temp;
+    }
+    //递归删除二分搜索树最大值
+    public E delMax() {
+        if (size == 0) {
+            throw new IllegalArgumentException("BST is empty!");
+        }
+        return delMax(root).e;
+    }
+    //思路太关键了，一定要从 返回删除最大值的根节点 出发。
+    private Node delMax(Node node) {
+
+        if (node.right == null) {
+             Node leftNode = node.left;
+             node.left = null;
+             size--;
+             return leftNode;
+        }
+        //下面这句话又是我最不擅长的
+        node.right = delMax(node.right);
+        //node.right = delMax(node.right);
+        //node.right = delMax(node.right);
+        return node;
+    }
+    //非递归删除最大值
+    public E delMax2() {
+        Node temp = root;
+        Node parent = root;
+        Node maxNode = maxNode();
+
+        //小技巧，父节点搞出来，保存起来
+        while (temp.right != null) {
+            parent = temp;
+            temp = temp.right;
+        }
+        parent.right = temp.left;
+        //System.out.println(temp.e);
+        size--;
+        return maxNode.e;
+    }
+
     public static void main(String[] args) {
         BST<Integer> bst = new BST<>();
         bst.add(41);
@@ -193,6 +263,12 @@ public class BST<E extends Comparable<E>> {
         //System.out.println(bst.contains(22));
         bst.preOrder();
         System.out.println();
-        bst.lyerOrder();
+        bst.delMax2();
+        bst.preOrder();
+//        System.out.println(bst.minNode().e);
+//        System.out.println(bst.minimum());
+//        System.out.println(bst.maxNode().e);
+        //bst.lyerOrder();
+
     }
 }

@@ -19,6 +19,7 @@ public class BST<E extends Comparable<E>> {
 
     private int size;
     private Node root;
+    private int temp = 0;
 
     public BST() {
         size = 0;
@@ -142,6 +143,26 @@ public class BST<E extends Comparable<E>> {
         preOrder(node.left);
         preOrder(node.right);
     }
+    private void zeOrder(Node node) {
+        if (node == null) {
+                                                                                                return;
+        }
+        zeOrder(node.right);
+        System.out.print(node.e+" ");
+        zeOrder(node.left);
+
+    }
+
+    private void zeOrder2(Node node) {
+        if (node == null) {
+            return;
+        }
+        zeOrder2(node.right);
+        temp += (Integer)node.e;
+        System.out.print(temp+" ");
+        zeOrder2(node.left);
+
+    }
 
     public void preOrder2() {
         if (root == null) {
@@ -209,6 +230,29 @@ public class BST<E extends Comparable<E>> {
         }
         return temp;
     }
+
+    //递归删除二分搜索树最小值
+    public E delMin() {
+        if (size == 0) {
+            throw new IllegalArgumentException("BST is empty!");
+        }
+        return delMin(root) .e;
+    }
+    //思路太关键了，一定要从 返回删除最大值的根节点 出发。
+    private Node delMin(Node node) {
+
+        if (node.left == null) {
+            Node rightNode = node.right;
+            node.right = null;
+            size--;
+            return rightNode;
+        }
+        //下面这句话又是我最不擅长的
+        node.left = delMin(node.left);
+        //node.right = delMax(node.right);
+        //node.right = delMax(node.right);
+        return node;
+    }
     //递归删除二分搜索树最大值
     public E delMax() {
         if (size == 0) {
@@ -248,6 +292,44 @@ public class BST<E extends Comparable<E>> {
         return maxNode.e;
     }
 
+    public void delElem(E e){
+        if(!contains(e)){
+            System.out.println("not have elem");
+        }else{
+            root = delElem(root,e);
+        }
+    }
+    //递归返回的是删除指定元素的根节点
+    private Node delElem(Node node, E e) {
+        if (node == null) {
+            return null;
+        }
+        if (e.compareTo(node.e) < 0) {
+            node.left = delElem(node.left, e);
+            return node;
+        } else if (e.compareTo(node.e) > 0) {
+            node.right = delElem(node.right,e);
+            return node;
+        }else{
+            if (node.left == null) {
+                Node rightNode = node.right;
+                node.right = null;
+                return rightNode;
+            }
+            if (node.right == null) {
+                Node leftNode = node.left;
+                node.left = null;
+                return leftNode;
+            }
+            Node successor = minimum(node.right);
+            successor.right = delMin(node.right);
+            successor.left = node.left;
+            node.left = node.right = null;
+            return successor;
+
+        }
+    }
+
     public static void main(String[] args) {
         BST<Integer> bst = new BST<>();
         bst.add(41);
@@ -261,10 +343,11 @@ public class BST<E extends Comparable<E>> {
         bst.recurAdd(60);
         System.out.println(bst.size);
         //System.out.println(bst.contains(22));
-        bst.preOrder();
+        bst.zeOrder(bst.root);
         System.out.println();
-        bst.delMax2();
-        bst.preOrder();
+        bst.delElem(14);
+        bst.zeOrder(bst.root);
+        //bst.zeOrder2(bst.root);
 //        System.out.println(bst.minNode().e);
 //        System.out.println(bst.minimum());
 //        System.out.println(bst.maxNode().e);
